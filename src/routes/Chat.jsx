@@ -1,9 +1,13 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Chat from '../Components/Chat'
 
-function Chat() {
+function ChatRoutes() {
   return (
-    <div>Chat</div>
+    <Routes>
+      <Route path='/' element={<Chat />}/>
+    </Routes>
   )
 }
 
-export default Chat
+export default ChatRoutes
