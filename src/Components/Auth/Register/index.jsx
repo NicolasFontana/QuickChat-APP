@@ -2,11 +2,13 @@ import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "assets/logo-removebg-preview.png";
 import ButtonText from "Components/Shared/Button/ButtonText";
 import Input from "Components/Shared/Input";
-import style from "./index.module.css";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import styles from "./index.module.css";
 
 const schema = Joi.object({
   username: Joi.string().min(3).max(40).required().messages({
@@ -36,6 +38,7 @@ const schema = Joi.object({
 });
 
 function Register() {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -48,56 +51,72 @@ function Register() {
       email: "",
       password: "",
       confirmPassword: "",
-    }
+    },
   });
 
-  console.log(errors);
-
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      }),
+    });
+    const user = await response.json();
+    if (user.error) {
+      toast.error(user.message, {
+        position: "bottom-right",
+        theme: "dark"
+      });
+    }
+    if (user.error === false) {
+      localStorage.setItem("chat-app-user", JSON.stringify(user.data))
+      navigate("/")
+    }
   };
 
   return (
-    <div className={style.containerForm}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className={style.brand}>
-          <img src={Logo} alt="Logo QuickChat" />
-          <h1>QuickChat</h1>
-        </div>
-        <Input
-          type="text"
-          name="username"
-          placeholder="Username"
-          register={register}
-          error={errors.username?.message}
-        />
-        <Input
-          type="email"
-          name="email"
-          placeholder="Email"
-          register={register}
-          error={errors.email?.message}
-        />
-        <Input
-          type="password"
-          name="password"
-          placeholder="Password"
-          register={register}
-          error={errors.password?.message}
-        />
-        <Input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm password"
-          register={register}
-          error={errors.confirmPassword?.message}
-        />
-        <ButtonText type={"submit"} label={"Register"} />
-        <span>
-          Have an account? <Link to="/auth/login">Log in</Link>
-        </span>
-      </form>
-    </div>
+    <>
+      <div className={styles.containerForm}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className={styles.brand}>
+            <img src={Logo} alt="Logo QuickChat" />
+            <h1>QuickChat</h1>
+          </div>
+          <Input
+            type="text"
+            name="username"
+            placeholder="Username"
+            register={register}
+            error={errors.username?.message}
+          />
+          <Input type="email" name="email" placeholder="Email" register={register} error={errors.email?.message} />
+          <Input
+            type="password"
+            name="password"
+            placeholder="Password"
+            register={register}
+            error={errors.password?.message}
+          />
+          <Input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm password"
+            register={register}
+            error={errors.confirmPassword?.message}
+          />
+          <ButtonText type={"submit"} label={"Register"} />
+          <span>
+            Have an account? <Link to="/auth/login">Log in</Link>
+          </span>
+        </form>
+      </div>
+      <ToastContainer />
+    </>
   );
 }
 
