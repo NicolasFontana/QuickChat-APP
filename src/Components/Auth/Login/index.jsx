@@ -1,10 +1,13 @@
-import React from 'react'
-import styles from './index.module.css'
-import Input from 'Components/Shared/Input'
-import ButtonText from 'Components/Shared/Button/ButtonText'
-import { useForm } from 'react-hook-form'
-import { joiResolver } from '@hookform/resolvers/joi'
-import Joi from 'joi'
+import React from "react";
+import styles from "./index.module.css";
+import Logo from "assets/logo-removebg-preview.png";
+import Input from "Components/Shared/Input";
+import ButtonText from "Components/Shared/Button/ButtonText";
+import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -26,29 +29,53 @@ const schema = Joi.object({
 });
 
 function Login() {
-  const { register, handleSubmit, formState: { errors }} = useForm({
-    mode: 'onBlur',
+  const navigate = useNavigate()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onBlur",
     resolver: joiResolver(schema),
     defaultValues: {
-      email: '',
-      password: ''
-    }
-  })
+      email: "",
+      password: "",
+    },
+  });
 
-  const onSubmit = (data) => {
-    console.log(data)
-  }
+  const onSubmit = async (data) => {
+    const { email, password } = data
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password
+      }),
+    });
+    const user = await response.json()
+    if(user.error) {
+      return toast.error(user.message, {
+        position: "bottom-right",
+        theme: "dark"
+      })
+    }
+    if(user.error === false) {
+      localStorage.setItem('chat-app-user', JSON.stringify(user.data))
+      return navigate("/")
+    }
+  };
 
   return (
-    <div style={styles.containerForm}>
+    <div className={styles.containerForm}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          type="email"
-          name="email"
-          placeholder="Email"
-          register={register}
-          error={errors.email?.message}
-        />
+        <div className={styles.brand}>
+          <img src={Logo} alt="Logo QuickChat" />
+          <h1>QuickChat</h1>
+        </div>
+        <Input type="email" name="email" placeholder="Email" register={register} error={errors.email?.message} />
         <Input
           type="password"
           name="password"
@@ -56,10 +83,14 @@ function Login() {
           register={register}
           error={errors.password?.message}
         />
-        <ButtonText type={"submit"} label={"Register"} />
+        <ButtonText type={"submit"} label={"Login"} />
+        <span>
+          Don't have an account? <Link to="/auth/register">Register</Link>
+        </span>
       </form>
+      <ToastContainer />
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;
