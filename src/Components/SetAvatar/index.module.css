@@ -4,6 +4,7 @@
   align-items: center;
   flex-direction: column;
   background-color: #131324;
+  gap: 5rem;
   height: 100vh;
   width: 100vw;
 }
@@ -18,9 +19,21 @@
 }
 
 .avatar {
-  border: 0.4rem solid transparent
+  border: 0.4rem solid transparent;
+  padding: 0.4rem;
+  display: flex;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s all ease-in-out;
+}
+
+.avatarSelected {
+  border: 0.4rem solid #4e0eff;
+  border-radius: 50%;
 }
 
 .avatar img {
+  border-radius: 50%;
   height: 6rem;
 }
