@@ -15,7 +15,8 @@
 
 .avatars {
   display: flex;
-  gap: 2rem
+  gap: 2rem;
+  cursor: pointer;
 }
 
 .avatar {

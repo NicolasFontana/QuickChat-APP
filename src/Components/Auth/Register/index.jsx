@@ -1,13 +1,13 @@
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "assets/logo-removebg-preview.png";
 import ButtonText from "Components/Shared/Button/ButtonText";
 import Input from "Components/Shared/Input";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import styles from "./index.module.css";
 
 const schema = Joi.object({
@@ -35,10 +35,19 @@ const schema = Joi.object({
   confirmPassword: Joi.string().equal(Joi.ref("password")).messages({
     "any.only": "Passwords don't match",
   }),
+  avatarImage: Joi.string().allow("").required(),
 });
 
 function Register() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("chat-app-user")) {
+      navigate("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -51,6 +60,7 @@ function Register() {
       email: "",
       password: "",
       confirmPassword: "",
+      avatarImage: "",
     },
   });
 
@@ -64,18 +74,19 @@ function Register() {
         username: data.username,
         email: data.email,
         password: data.password,
+        avatarImage: data.avatarImage,
       }),
     });
     const user = await response.json();
     if (user.error) {
       toast.error(user.message, {
         position: "bottom-right",
-        theme: "dark"
+        theme: "dark",
       });
     }
     if (user.error === false) {
-      localStorage.setItem("chat-app-user", JSON.stringify(user.data))
-      navigate("/")
+      localStorage.setItem("chat-app-user", JSON.stringify(user.data));
+      navigate("/setAvatar");
     }
   };
 

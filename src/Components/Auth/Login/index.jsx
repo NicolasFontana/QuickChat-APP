@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./index.module.css";
 import Logo from "assets/logo-removebg-preview.png";
 import Input from "Components/Shared/Input";
@@ -29,7 +29,15 @@ const schema = Joi.object({
 });
 
 function Login() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("chat-app-user")) {
+      navigate("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -44,7 +52,7 @@ function Login() {
   });
 
   const onSubmit = async (data) => {
-    const { email, password } = data
+    const { email, password } = data;
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
       method: "POST",
       headers: {
@@ -52,19 +60,19 @@ function Login() {
       },
       body: JSON.stringify({
         email,
-        password
+        password,
       }),
     });
-    const user = await response.json()
-    if(user.error) {
+    const user = await response.json();
+    if (user.error) {
       return toast.error(user.message, {
         position: "bottom-right",
-        theme: "dark"
-      })
+        theme: "dark",
+      });
     }
-    if(user.error === false) {
-      localStorage.setItem('chat-app-user', JSON.stringify(user.data))
-      return navigate("/")
+    if (user.error === false) {
+      localStorage.setItem("chat-app-user", JSON.stringify(user.data));
+      return navigate("/");
     }
   };
 
