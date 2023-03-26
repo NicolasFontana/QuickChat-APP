@@ -8,8 +8,8 @@ function AllRoutes() {
   return (
     <Routes>
       <Route path="/auth/*" element={<AuthRoutes />} />
-      <Route path="/chat/*" element={<ChatRoutes />} />
       <Route path="/setAvatar/*" element={<SetAvatarRoutes />} />
+      <Route path="/" element={<ChatRoutes />} />
     </Routes>
   );
 }
