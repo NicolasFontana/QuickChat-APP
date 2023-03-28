@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.css";
 import Contacts from "./Contacts";
-import ChatContainer from './ChatContainer'
+import ChatContainer from "./ChatContainer";
 
 function Chat() {
   const [contacts, setContacts] = useState([]);
@@ -26,7 +26,7 @@ function Chat() {
           const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/allUsers/${currentUser._id}`);
           const data = await response.json();
           setContacts(data.data);
-        }
+        };
         fetchData();
       } else {
         navigate("/setAvatar");
@@ -38,7 +38,7 @@ function Chat() {
     <div className={styles.container}>
       <div className={styles.containerChat}>
         <Contacts contacts={contacts} currentUser={currentUser} setCurrentChat={setCurrentChat} />
-        <ChatContainer currentChat={currentChat}/>
+        <ChatContainer currentChat={currentChat} currentUser={currentUser} />
       </div>
     </div>
   );

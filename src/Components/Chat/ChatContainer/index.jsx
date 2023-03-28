@@ -2,12 +2,12 @@ import React from 'react'
 import CurrentChat from './CurrentChat'
 import Welcome from './Welcome'
 
-function ChatContainer({ currentChat }) {
+function ChatContainer({ currentChat, currentUser }) {
   console.log(currentChat)
   return currentChat ? (
     <CurrentChat />
   ) : (
-    <Welcome />
+    <Welcome currentChat={currentChat} currentUser={currentUser} />
   )
 }
 
