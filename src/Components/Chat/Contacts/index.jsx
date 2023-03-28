@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styles from './index.module.css'
 import Logo from "assets/logo-removebg-preview.png";
+import Logout from "Components/Shared/Button/Logout"
 
 function Contacts({ contacts, currentUser, setCurrentChat }) {
   const [currentSelected, setCurrentSelected] = useState(undefined)
@@ -35,6 +36,7 @@ function Contacts({ contacts, currentUser, setCurrentChat }) {
         <div className={styles.username}>
           <h2>{currentUser?.username}</h2>
         </div>
+        <Logout />
       </div>
     </div>
   )

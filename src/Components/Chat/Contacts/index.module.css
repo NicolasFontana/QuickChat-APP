@@ -80,7 +80,17 @@
 }
 
 .username {
-  font-size: 14px;
   color: white;
+  width: 100%;
+}
+
+.username h2 {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.username h3 {
+  font-weight: 400;
+  font-size: 14px;
 }
 
