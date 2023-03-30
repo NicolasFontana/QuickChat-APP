@@ -3,11 +3,10 @@ import CurrentChat from './CurrentChat'
 import Welcome from './Welcome'
 
 function ChatContainer({ currentChat, currentUser }) {
-  console.log(currentChat)
   return currentChat ? (
-    <CurrentChat />
+    <CurrentChat currentChat={currentChat} currentUser={currentUser} />
   ) : (
-    <Welcome currentChat={currentChat} currentUser={currentUser} />
+    <Welcome currentUser={currentUser} />
   )
 }
 

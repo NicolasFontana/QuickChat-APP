@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  padding: 0 1.5rem;
+  padding-bottom: 1rem;
+  align-items: center;
+  gap: 1rem;
+}
+
+.containerEmoji {
+  position: relative;
+  color: white;
+}
+
+.containerEmoji svg {
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.emojiPicker {
+  position: absolute;
+  top: -460px;
+}
+
+.containerForm {
+  display: flex;
+  width: 100%;
+  border-radius: 2rem;
+  align-items: center;
+  gap: 2rem;
+  background-color: #ffffff34;
+}
+
+
+.containerForm input {
+  width: 90%;
+  height: 60%;
+  background-color: transparent;
+  color: white;
+  border: none;
+  padding-left: 1rem;
+  font-size: 1rem;
+}
+
+.containerForm input::selection {
+  background-color: #9186f3;
+}
+
+.containerForm input:focus {
+  outline: none;
+}
+
+.submit {
+  padding: 0.3rem 2rem;
+  border-radius: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #9186f3;
+  border: none;
+  cursor: pointer;
+}
+
+.submit svg {
+  font-size: 1.4rem;
+  color: white;
+}
