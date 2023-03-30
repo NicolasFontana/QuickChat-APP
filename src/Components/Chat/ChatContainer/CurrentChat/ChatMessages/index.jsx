@@ -1,10 +1,20 @@
-import React from 'react'
-import styles from './index.module.css'
+import React from "react";
+import styles from "./index.module.css";
 
-function ChatMessages() {
+function ChatMessages({ messages }) {
   return (
-    <div className={styles.container}>ChatMessages</div>
-  )
+    <div className={styles.container}>
+      {messages.map((msg) => {
+        return (
+          <div className={`${styles.message} ${msg.fromSelf ? styles.sender : styles.receiver}`}>
+            <div className={styles.content}>
+              <p>{msg.message}</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
-export default ChatMessages
+export default ChatMessages;

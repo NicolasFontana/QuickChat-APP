@@ -4,7 +4,7 @@ import { GrEmoji } from "react-icons/gr";
 import { MdSend } from "react-icons/md";
 import Picker from "emoji-picker-react";
 
-function ChatInput({ setMessageSent }) {
+function ChatInput({ handleMessage }) {
   const [showEmoji, setShowEmoji] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -20,7 +20,7 @@ function ChatInput({ setMessageSent }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if(message.length > 0) {
-      setMessageSent(message)
+      handleMessage(message)
       setMessage('')
     }
   }
