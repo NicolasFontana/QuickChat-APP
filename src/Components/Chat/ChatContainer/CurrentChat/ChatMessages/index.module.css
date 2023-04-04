@@ -8,6 +8,15 @@
   padding: 20px;
 }
 
+.container::-webkit-scrollbar {
+  width: 0.2rem;
+}
+.container::-webkit-scrollbar-thumb {
+  background-color: #ffffff39;
+  width: 0.1rem;
+  border-radius: 10px;
+}
+
 .message {
   display: flex;
   align-items: center;
