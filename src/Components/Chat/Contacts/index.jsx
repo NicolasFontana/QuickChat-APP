@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import styles from './index.module.css'
 import Logo from "assets/logo-removebg-preview.png";
 import Logout from "Components/Shared/Button/Logout"
-
+import avatarDefault from "assets/defaultuser.png"
+ 
 function Contacts({ contacts, currentUser, setCurrentChat }) {
   const [currentSelected, setCurrentSelected] = useState(undefined)
   const changeCurrentChat = (index, contact) => {
@@ -20,7 +21,7 @@ function Contacts({ contacts, currentUser, setCurrentChat }) {
           return (
               <div className={`${styles.contact} ${index === currentSelected ? styles.selected : ''}`} key={index} onClick={() => changeCurrentChat(index, contact)}>
                 <div className={styles.avatar}>
-                  <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt={`${contact.username}'s avatar`} />
+                  <img src={contact.avatarImage ? `data:image/svg+xml;base64,${contact.avatarImage}` : avatarDefault} alt={`${contact.username}'s avatar`} />
                 </div>
                 <div className={styles.username}>
                   <h3>{contact.username}</h3>
@@ -31,7 +32,7 @@ function Contacts({ contacts, currentUser, setCurrentChat }) {
       </div>
       <div className={styles.currentUser}>
         <div className={styles.avatar}>
-          <img src={`data:image/svg+xml;base64,${currentUser?.avatarImage}`} alt={`${currentUser?.username}'s avatar`} />
+          <img src={currentUser?.avatarImage ? `data:image/svg+xml;base64,${currentUser?.avatarImage}` : avatarDefault} alt={`${currentUser?.username}'s avatar`} />
         </div>
         <div className={styles.username}>
           <h2>{currentUser?.username}</h2>

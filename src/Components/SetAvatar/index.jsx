@@ -12,7 +12,6 @@ function SetAvatar() {
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
-  const api = "https://api.multiavatar.com";
 
   useEffect(() => {
     if (!localStorage.getItem("chat-app-user")) {
@@ -35,7 +34,7 @@ function SetAvatar() {
     } else {
       const user = JSON.parse(localStorage.getItem("chat-app-user"));
       const avatarImage = avatars[selectedAvatar];
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/setAvatar/${user._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/setAvatar/${user._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -60,7 +59,7 @@ function SetAvatar() {
     const getAvatars = async () => {
       try {
         for (let i = 0; i < 4; i++) {
-          const response = await fetch(`${api}/${Math.round(Math.random() * 1000)}`);
+          const response = await fetch(`${process.env.REACT_APP_MULTIAVATAR_API}/${Math.round(Math.random() * 1000)}`);
           const image = await response.text();
           const buffer = Buffer(image);
           data.push(buffer.toString("base64"));
