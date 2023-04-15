@@ -8,6 +8,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import jwtDecode from "jwt-decode";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -32,10 +33,10 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("chat-app-user")) {
-      navigate("/");
+    const token = localStorage.getItem("token");
+    if (token) {
+      return navigate("/");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
@@ -71,7 +72,7 @@ function Login() {
       });
     }
     if (user.error === false) {
-      localStorage.setItem("chat-app-user", JSON.stringify(user.data));
+      localStorage.setItem("token", JSON.stringify(user.data.token));
       return navigate("/");
     }
   };

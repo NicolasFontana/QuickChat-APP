@@ -42,10 +42,10 @@ function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("chat-app-user")) {
-      navigate("/");
+    const token = localStorage.getItem("token");
+    if (token) {
+      return navigate("/");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
@@ -85,7 +85,7 @@ function Register() {
       });
     }
     if (user.error === false) {
-      localStorage.setItem("chat-app-user", JSON.stringify(user.data));
+      localStorage.setItem("token", JSON.stringify(user.data.token));
       navigate("/setAvatar");
     }
   };
