@@ -46,6 +46,7 @@ function Register() {
     if (token) {
       return navigate("/");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {

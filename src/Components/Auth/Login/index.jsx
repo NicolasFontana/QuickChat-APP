@@ -8,7 +8,6 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import jwtDecode from "jwt-decode";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -37,6 +36,7 @@ function Login() {
     if (token) {
       return navigate("/");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
