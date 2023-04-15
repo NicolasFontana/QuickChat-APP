@@ -5,25 +5,84 @@ import { Buffer } from "buffer";
 import Preloader from "Components/Shared/Preloader";
 import ButtonText from "Components/Shared/Button/ButtonText";
 import { ToastContainer, toast } from "react-toastify";
+import jwt_decoded from "jwt-decode";
 
 function SetAvatar() {
   const [avatars, setAvatars] = useState([]);
+  const [currentUser, setCurrentUser] = useState(undefined);
   const [selectedAvatar, setSelectedAvatar] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
 
+  // Si se edita o elimina el token, nos saca de la app
   useEffect(() => {
-    if (!localStorage.getItem("chat-app-user")) {
+    const handleStorageChange = (event) => {
+      if(event.key === "token") {
+        setCurrentUser(undefined);
+        localStorage.removeItem("token")
+        navigate("/auth/login");
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
       navigate("/auth/login");
     } else {
-      const user = JSON.parse(localStorage.getItem("chat-app-user"))
-      if(user.avatarImage !== "") {
-        navigate("/")
-      }
+      const token = JSON.parse(localStorage.getItem("token"));
+      const decoded = jwt_decoded(token);
+      const getUser = async () => {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${decoded.id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            token: JSON.parse(localStorage.getItem("token")),
+          },
+        });
+        if (!response.ok) {
+          localStorage.removeItem("token");
+          setCurrentUser(undefined);
+          navigate("/auth/login");
+        } else {
+          const user = await response.json();
+          setCurrentUser(user.data);
+        }
+      };
+      getUser();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (currentUser?.avatarImage === "") {
+      const data = [];
+      const getAvatars = async () => {
+        try {
+          for (let i = 0; i < 4; i++) {
+            const response = await fetch(
+              `${process.env.REACT_APP_MULTIAVATAR_API}/${Math.round(Math.random() * 1000)}`
+            );
+            const image = await response.text();
+            const buffer = Buffer(image);
+            data.push(buffer.toString("base64"));
+          }
+          setAvatars(data);
+          setIsLoading(false);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      getAvatars();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
 
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
@@ -32,9 +91,8 @@ function SetAvatar() {
         theme: "dark",
       });
     } else {
-      const user = JSON.parse(localStorage.getItem("chat-app-user"));
       const avatarImage = avatars[selectedAvatar];
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/setAvatar/${user._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/setAvatar/${currentUser._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -48,30 +106,10 @@ function SetAvatar() {
           theme: "dark",
         });
       } else {
-        localStorage.setItem("chat-app-user", JSON.stringify(userUpdated.data));
         navigate("/");
       }
     }
   };
-
-  useEffect(() => {
-    const data = [];
-    const getAvatars = async () => {
-      try {
-        for (let i = 0; i < 4; i++) {
-          const response = await fetch(`${process.env.REACT_APP_MULTIAVATAR_API}/${Math.round(Math.random() * 1000)}`);
-          const image = await response.text();
-          const buffer = Buffer(image);
-          data.push(buffer.toString("base64"));
-        }
-        setAvatars(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getAvatars();
-  }, []);
 
   return isLoading ? (
     <Preloader>Loading avatars...</Preloader>
