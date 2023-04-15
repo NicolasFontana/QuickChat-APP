@@ -11,8 +11,8 @@ function CurrentChat({ currentChat, currentUser, socket }) {
   useEffect(() => {
     const getAllMessages = async () => {
       const data = {
-        from: currentUser._id,
-        to: currentChat._id,
+        from: currentUser?._id,
+        to: currentChat?._id,
       };
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/messages/getAllMessages`, {
         method: "POST",
@@ -43,16 +43,18 @@ function CurrentChat({ currentChat, currentUser, socket }) {
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("msg-receive", (msg) => {
-        setArrivalMessage({ fromSelf: false, message: msg });
+      socket.current.on("msg-receive", (data) => {
+        setArrivalMessage({ fromSelf: false, from: data.from, message: data.msg });
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    setMessages([...messages, arrivalMessage]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (currentChat._id === arrivalMessage.from) {
+      setMessages([...messages, arrivalMessage]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arrivalMessage]);
 
   return (

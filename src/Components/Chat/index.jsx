@@ -4,7 +4,7 @@ import styles from "./index.module.css";
 import Contacts from "./Contacts";
 import ChatContainer from "./ChatContainer";
 import { io } from "socket.io-client";
-
+import jwt_decoded from "jwt-decode";
 
 function Chat() {
   const [contacts, setContacts] = useState([]);
@@ -12,21 +12,56 @@ function Chat() {
   const [currentChat, setCurrentChat] = useState(undefined);
   const navigate = useNavigate();
   const socket = useRef();
+
+  // Si se edita o elimina el token, nos saca de la app
   useEffect(() => {
-    if (!localStorage.getItem("chat-app-user")) {
-      navigate("auth/login");
+    const handleStorageChange = (event) => {
+      if (event.key === "token") {
+        setCurrentUser(undefined);
+        localStorage.removeItem("token");
+        navigate("/auth/login");
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    if (token) {
+      const decoded = jwt_decoded(token);
+      const getUser = async () => {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${decoded.id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            token: JSON.parse(localStorage.getItem("token")),
+          },
+        });
+        if (!response.ok) {
+          localStorage.removeItem("token");
+          setCurrentUser(undefined);
+          navigate("/auth/login");
+        } else {
+          const user = await response.json();
+          setCurrentUser(user.data);
+        }
+      };
+      getUser();
     } else {
-      setCurrentUser(JSON.parse(localStorage.getItem("chat-app-user")));
+      navigate("auth/login");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     socket.current = io(process.env.REACT_APP_API_URL);
-    if(currentUser) {
-      socket.current.emit("add-user", currentUser._id)
+    if (currentUser) {
+      socket.current.emit("add-user", currentUser._id);
     }
-  },[currentUser])
+  }, [currentUser]);
 
   useEffect(() => {
     if (currentUser) {
@@ -43,6 +78,7 @@ function Chat() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
+
   return (
     <div className={styles.container}>
       <div className={styles.containerChat}>
